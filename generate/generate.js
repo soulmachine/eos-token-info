@@ -84,7 +84,7 @@ async function getCurrencyStats(code, symbol) {
  * @param {{ [key: string]: TokenInfo }} tokenInfoMap
  * @returns {Promise<void>}
  */
-async function addToken(exchangeInfo, tokenInfoMap) {
+async function addTokensFromExchange(exchangeInfo, tokenInfoMap) {
   const pairs = Object.keys(exchangeInfo.pairs).filter(x => x.endsWith('_EOS'));
   console.info(pairs);
   for (let i = 0; i < pairs.length; i += 1) {
@@ -123,6 +123,34 @@ async function addToken(exchangeInfo, tokenInfoMap) {
   }
 }
 
+/**
+ * @param {string} symbol
+ * @param {string} contract
+ * @param {{ [key: string]: TokenInfo }} tokenInfoMap
+ * @returns {Promise<void>}
+ */
+async function addToken(symbol, contract, tokenInfoMap) {
+  const stats = await getCurrencyStats(contract, symbol); // eslint-disable-line no-await-in-loop
+
+  const calcDecimals = (/** @type {string} */ supply) => {
+    if (!supply.includes('.')) return 0;
+    return supply.split(' ')[0].split('.')[1].length;
+  };
+  const decimals = calcDecimals(stats.supply);
+
+  /** @type {TokenInfo} */
+  const tokenInfo = {
+    symbol,
+    // @ts-ignore
+    contract,
+    decimals,
+    issuer: stats.issuer,
+    maximum_supply: parseFloat(stats.max_supply.split(' ')[0]),
+    // supply: parseFloat(stats.supply.split(' ')[0]),
+  };
+  tokenInfoMap[symbol] = tokenInfo; // eslint-disable-line no-param-reassign
+}
+
 // sort object keys and stringify.
 function stringifyOrder(/** @type {{ [key: string]: any }} */ obj) {
   /** @type {string[]} */
@@ -141,10 +169,13 @@ function stringifyOrder(/** @type {{ [key: string]: any }} */ obj) {
 
   /** @type {{ [key: string]: TokenInfo }} */
   const tokenInfoMap = {};
-  await addToken(whaleex, tokenInfoMap);
-  await addToken(newdex, tokenInfoMap);
+  await addTokensFromExchange(whaleex, tokenInfoMap);
+  await addTokensFromExchange(newdex, tokenInfoMap);
+
+  await addToken('EOS', 'eosio.token', tokenInfoMap);
+  await addToken('USDT', 'tethertether', tokenInfoMap);
 
   console.info(tokenInfoMap);
 
-  fs.writeFileSync('../tokens.json', stringifyOrder(tokenInfoMap));
+  fs.writeFileSync('../tokens.json', stringifyOrder(tokenInfoMap) + '\n');
 })();
