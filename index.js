@@ -1,4 +1,4 @@
-const assert = require('assert').strict;
+const assert = require("assert").strict;
 
 /**
  * Token Information.
@@ -12,7 +12,7 @@ const assert = require('assert').strict;
  */
 
 /** @type {{[key:string]: TokenInfo}} */
-const data = require('./tokens.json');
+const data = require("./tokens.json");
 
 /**
  * Get the symbol info.

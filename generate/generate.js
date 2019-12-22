@@ -22,6 +22,17 @@ const EOS_API_ENDPOINTS = [
 ];
 
 /**
+ * Token Information.
+ *
+ * @typedef {Object} TokenInfo
+ * @property {string} symbol
+ * @property {string} contract
+ * @property {number} decimals
+ * @property {string} issuer
+ * @property {number} maximum_supply
+ */
+
+/**
  * @param {string} url
  * @param {{ [key: string]: any }} data
  * @returns {Promise<any>}
@@ -70,7 +81,7 @@ async function getCurrencyStats(code, symbol) {
 
 /**
  * @param {import('exchange-info').ExchangeInfo} exchangeInfo
- * @param {{ [key: string]: import('./index').TokenInfo }} tokenInfoMap
+ * @param {{ [key: string]: TokenInfo }} tokenInfoMap
  * @returns {Promise<void>}
  */
 async function addToken(exchangeInfo, tokenInfoMap) {
@@ -97,7 +108,7 @@ async function addToken(exchangeInfo, tokenInfoMap) {
         return supply.split(' ')[0].split('.')[1].length;
       };
       assert.equal(decimals, calcDecimals(stats.supply));
-      /** @type {import('./index').TokenInfo} */
+      /** @type {TokenInfo} */
       const tokenInfo = {
         symbol,
         // @ts-ignore
@@ -128,12 +139,12 @@ function stringifyOrder(/** @type {{ [key: string]: any }} */ obj) {
   const whaleex = await getExchangeInfo('WhaleEx');
   const newdex = await getExchangeInfo('Newdex');
 
-  /** @type {{ [key: string]: import('./index').TokenInfo }} */
+  /** @type {{ [key: string]: TokenInfo }} */
   const tokenInfoMap = {};
   await addToken(whaleex, tokenInfoMap);
   await addToken(newdex, tokenInfoMap);
 
   console.info(tokenInfoMap);
 
-  fs.writeFileSync('tokens.json', stringifyOrder(tokenInfoMap));
+  fs.writeFileSync('../tokens.json', stringifyOrder(tokenInfoMap));
 })();

@@ -6,9 +6,9 @@ All EOS tokens information.
 
 ```javascript
 /* eslint-disable import/no-unresolved,no-console */
-const { getTokenInfo } = require('eos-token-info');
+const { getTokenInfo } = require("eos-token-info");
 
-console.info(getTokenInfo('EIDOS'));
+console.info(getTokenInfo("EIDOS"));
 ```
 
 ## API Manual
@@ -35,14 +35,6 @@ export interface TokenInfo {
   issuer: string;
   maximum_supply: number;
 }
-```
-
-## Update `tokens.json`
-
-Use the following command to generate `tokens.json`:
-
-```bash
-node ./generate.ts
 ```
 
 ## References
