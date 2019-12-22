@@ -80,6 +80,15 @@ async function getCurrencyStats(code, symbol) {
 }
 
 /**
+ * @param {string} numberStr
+ * @returns {number}
+ */
+function calcDecimals(numberStr) {
+  if (!numberStr.includes('.')) return 0;
+  return numberStr.split(' ')[0].split('.')[1].length;
+}
+
+/**
  * @param {import('exchange-info').ExchangeInfo} exchangeInfo
  * @param {{ [key: string]: TokenInfo }} tokenInfoMap
  * @returns {Promise<void>}
@@ -103,11 +112,8 @@ async function addTokensFromExchange(exchangeInfo, tokenInfoMap) {
     } else {
       // @ts-ignore
       const stats = await getCurrencyStats(contract, symbol); // eslint-disable-line no-await-in-loop
-      const calcDecimals = (/** @type {string} */ supply) => {
-        if (!supply.includes('.')) return 0;
-        return supply.split(' ')[0].split('.')[1].length;
-      };
-      assert.equal(decimals, calcDecimals(stats.supply));
+
+      assert.equal(decimals, calcDecimals(stats.supply.split(' ')[0]));
       /** @type {TokenInfo} */
       const tokenInfo = {
         symbol,
@@ -132,11 +138,7 @@ async function addTokensFromExchange(exchangeInfo, tokenInfoMap) {
 async function addToken(symbol, contract, tokenInfoMap) {
   const stats = await getCurrencyStats(contract, symbol); // eslint-disable-line no-await-in-loop
 
-  const calcDecimals = (/** @type {string} */ supply) => {
-    if (!supply.includes('.')) return 0;
-    return supply.split(' ')[0].split('.')[1].length;
-  };
-  const decimals = calcDecimals(stats.supply);
+  const decimals = calcDecimals(stats.supply.split(' ')[0]);
 
   /** @type {TokenInfo} */
   const tokenInfo = {
