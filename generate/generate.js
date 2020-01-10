@@ -184,5 +184,5 @@ function stringifyOrder(/** @type {{ [key: string]: any }} */ obj) {
 
   console.info(tokenInfoMap);
 
-  fs.writeFileSync('../tokens.json', stringifyOrder(tokenInfoMap) + '\n');
+  fs.writeFileSync('../tokens.json', `${stringifyOrder(tokenInfoMap)}\n`);
 })();
