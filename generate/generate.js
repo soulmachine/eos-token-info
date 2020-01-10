@@ -177,6 +177,11 @@ function stringifyOrder(/** @type {{ [key: string]: any }} */ obj) {
   await addToken('EOS', 'eosio.token', tokenInfoMap);
   await addToken('USDT', 'tethertether', tokenInfoMap);
 
+  if (fs.existsSync('../tokens.json')) {
+    const oldTokens = JSON.parse(fs.readFileSync('../tokens.json', 'utf8'));
+    Object.assign(tokenInfoMap, oldTokens);
+  }
+
   console.info(tokenInfoMap);
 
   fs.writeFileSync('../tokens.json', stringifyOrder(tokenInfoMap) + '\n');
