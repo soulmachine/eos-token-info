@@ -17,7 +17,7 @@ const data = require("./tokens.json");
 /**
  * Get the symbol info.
  *
- * @param symbol{string} The currency symbol, e.g., EIDOS, DICE, KEY, etc.
+ * @param symbol {string} The currency symbol, e.g., EIDOS, DICE, KEY, etc.
  * @returns {TokenInfo} The TokenInfo
  */
 // eslint-disable-next-line import/prefer-default-export
